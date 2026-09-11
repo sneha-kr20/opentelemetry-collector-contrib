@@ -286,3 +286,46 @@ func TestNewLockRequestSliceLabelValue(t *testing.T) {
 	assert.Equal(t, LockRequestSliceValueType, labelValue.Metadata().ValueType())
 	assert.Equal(t, expectedValue, labelValue.Value())
 }
+
+func TestIntSliceLabelValueMetadata(t *testing.T) {
+	metadata, _ := NewLabelValueMetadata(labelName, labelColumnName, IntSliceValueType)
+
+	assert.Equal(t, IntSliceValueType, metadata.ValueType())
+	assert.Equal(t, labelName, metadata.Name())
+	assert.Equal(t, labelColumnName, metadata.ColumnName())
+
+	var expectedType *[]int64
+
+	assert.IsType(t, expectedType, metadata.ValueHolder())
+}
+
+func TestIntSliceLabelValue(t *testing.T) {
+	metadata, _ := NewLabelValueMetadata(labelName, labelColumnName, IntSliceValueType)
+	labelValue := intSliceLabelValue{
+		metadata: metadata,
+		value:    stringValue,
+	}
+
+	assert.Equal(t, IntSliceValueType, labelValue.Metadata().ValueType())
+	assert.Equal(t, stringValue, labelValue.Value())
+
+	attributes := pcommon.NewMap()
+	labelValue.SetValueTo(attributes)
+
+	attributeValue, exists := attributes.Get(labelName)
+
+	assert.True(t, exists)
+	assert.Equal(t, stringValue, attributeValue.Str())
+}
+
+func TestNewIntSliceLabelValue(t *testing.T) {
+	metadata, _ := NewLabelValueMetadata(labelName, labelColumnName, IntSliceValueType)
+	value := []int64{2, 1, 3}
+	expectedValue := "1,2,3"
+	valueHolder := &value
+
+	labelValue := newIntSliceLabelValue(metadata, valueHolder)
+
+	assert.Equal(t, IntSliceValueType, labelValue.Metadata().ValueType())
+	assert.Equal(t, expectedValue, labelValue.Value())
+}

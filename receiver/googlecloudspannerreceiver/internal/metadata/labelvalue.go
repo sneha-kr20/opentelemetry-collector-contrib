@@ -6,6 +6,7 @@ package metadata // import "github.com/open-telemetry/opentelemetry-collector-co
 import (
 	"fmt"
 	"sort"
+	"strconv"
 	"strings"
 
 	"go.opentelemetry.io/collector/pdata/pcommon"
@@ -61,6 +62,11 @@ type boolLabelValue struct {
 }
 
 type stringSliceLabelValue struct {
+	metadata LabelValueMetadata
+	value    string
+}
+
+type intSliceLabelValue struct {
 	metadata LabelValueMetadata
 	value    string
 }
@@ -150,6 +156,36 @@ func (v stringSliceLabelValue) Value() any {
 
 func (v stringSliceLabelValue) SetValueTo(attributes pcommon.Map) {
 	attributes.PutStr(v.metadata.Name(), v.value)
+}
+
+func (v intSliceLabelValue) Metadata() LabelValueMetadata {
+	return v.metadata
+}
+
+func (v intSliceLabelValue) Value() any {
+	return v.value
+}
+
+func (v intSliceLabelValue) SetValueTo(attributes pcommon.Map) {
+	attributes.PutStr(v.metadata.Name(), v.value)
+}
+
+func (v *intSliceLabelValue) ModifyValue(s string) {
+	v.value = s
+}
+
+func newIntSliceLabelValue(metadata LabelValueMetadata, valueHolder any) LabelValue {
+	value := *valueHolder.(*[]int64)
+	var strValues []string
+	for _, v := range value {
+		strValues = append(strValues, strconv.FormatInt(v, 10))
+	}
+	sort.Strings(strValues)
+	constructedValue := strings.Join(strValues, ",")
+	return intSliceLabelValue{
+		metadata: metadata,
+		value:    constructedValue,
+	}
 }
 
 func newStringSliceLabelValue(metadata LabelValueMetadata, valueHolder any) LabelValue {
@@ -271,6 +307,12 @@ func NewLabelValueMetadata(name, columnName string, valueType ValueType) (LabelV
 		newLabelValueFunc = newStringSliceLabelValue
 		valueHolderFunc = func() any {
 			var valueHolder []string
+			return &valueHolder
+		}
+	case IntSliceValueType:
+		newLabelValueFunc = newIntSliceLabelValue
+		valueHolderFunc = func() any {
+			var valueHolder []int64
 			return &valueHolder
 		}
 	case ByteSliceValueType:
