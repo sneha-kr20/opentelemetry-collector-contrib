@@ -1,5 +1,54 @@
 metadata:
 #
+# -------------------------------------------- Active Partitioned DMLs -------------------------------------------------
+#
+  - name: "active partitioned dmls"
+    query: "SELECT SESSION_ID, SUBSTR(TEXT, 1, 100) AS TRUNCATED_TEXT, TEXT_FINGERPRINT, NUM_PARTITIONS_TOTAL, NUM_PARTITIONS_COMPLETE, NUM_TRIVIAL_PARTITIONS_COMPLETE, PROGRESS, ROWS_PROCESSED FROM SPANNER_SYS.ACTIVE_PARTITIONED_DMLS"
+    metric_name_prefix: "database/spanner/active_partitioned_dmls/"
+    high_cardinality: true
+    labels:
+      - name: "session_id"
+        column_name: "SESSION_ID"
+        value_type: "string"
+      - name: "query_text_truncated"
+        column_name: "TRUNCATED_TEXT"
+        value_type: "string"
+      - name: "query_text_fingerprint"
+        column_name: "TEXT_FINGERPRINT"
+        value_type: "int"
+    metrics:
+      - name: "num_partitions_total"
+        column_name: "NUM_PARTITIONS_TOTAL"
+        value_type: "int"
+        data:
+          type: "gauge"
+        unit: "one"
+      - name: "num_partitions_complete"
+        column_name: "NUM_PARTITIONS_COMPLETE"
+        value_type: "int"
+        data:
+          type: "gauge"
+        unit: "one"
+      - name: "num_trivial_partitions_complete"
+        column_name: "NUM_TRIVIAL_PARTITIONS_COMPLETE"
+        value_type: "int"
+        data:
+          type: "gauge"
+        unit: "one"
+      - name: "progress"
+        column_name: "PROGRESS"
+        value_type: "float"
+        data:
+          type: "gauge"
+        unit: "one"
+      - name: "rows_processed"
+        column_name: "ROWS_PROCESSED"
+        value_type: "int"
+        data:
+          type: "gauge"
+        unit: "one"
+
+#
 # -------------------------------------------- Active Queries Summary --------------------------------------------------
 #
   - name: "active queries summary"
@@ -541,51 +590,3 @@ metadata:
         data:
           type: "gauge"
         unit: "byte"
-#
-# -------------------------------------------- Active Partitioned DMLs -------------------------------------------------
-#
-  - name: "active partitioned dmls"
-    query: "SELECT SESSION_ID, TEXT, TEXT_FINGERPRINT, NUM_PARTITIONS_TOTAL, NUM_PARTITIONS_COMPLETE, NUM_TRIVIAL_PARTITIONS_COMPLETE, PROGRESS, ROWS_PROCESSED FROM SPANNER_SYS.ACTIVE_PARTITIONED_DMLS"
-    metric_name_prefix: "database/spanner/active_partitioned_dmls/"
-    high_cardinality: true
-    labels:
-      - name: "session_id"
-        column_name: "SESSION_ID"
-        value_type: "string"
-      - name: "query_text"
-        column_name: "TEXT"
-        value_type: "string"
-      - name: "query_text_fingerprint"
-        column_name: "TEXT_FINGERPRINT"
-        value_type: "int"
-    metrics:
-      - name: "num_partitions_total"
-        column_name: "NUM_PARTITIONS_TOTAL"
-        value_type: "int"
-        data:
-          type: "gauge"
-        unit: "one"
-      - name: "num_partitions_complete"
-        column_name: "NUM_PARTITIONS_COMPLETE"
-        value_type: "int"
-        data:
-          type: "gauge"
-        unit: "one"
-      - name: "num_trivial_partitions_complete"
-        column_name: "NUM_TRIVIAL_PARTITIONS_COMPLETE"
-        value_type: "int"
-        data:
-          type: "gauge"
-        unit: "one"
-      - name: "progress"
-        column_name: "PROGRESS"
-        value_type: "float"
-        data:
-          type: "gauge"
-        unit: "one"
-      - name: "rows_processed"
-        column_name: "ROWS_PROCESSED"
-        value_type: "int"
-        data:
-          type: "gauge"
-        unit: "one"
