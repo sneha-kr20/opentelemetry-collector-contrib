@@ -80,7 +80,7 @@ Brief description of configuration properties:
 - **cardinality_total_limit** - limit of active series per 24 hours period. If specified, turns on cardinality filtering and handling. If zero or not specified, cardinality is not handled. You can read [this document](cardinality.md) for more information about cardinality handling and filtering.
 - **hide_topn_lockstats_rowrangestartkey** - if true, masks PII (key values) in row_range_start_key label for the "top minute lock stats" metric
 - **hide_split_stats_keys** - if true, masks sensitive values by hashing them using SHA256 for supported split stats labels (e.g., split_start, split_limit)
-- **truncate_text** - if true, the query text is truncated to 1024 characters.
+- **truncate_text** - if true, the query text is truncated to 1024 characters for the "top minute query stats" and "active partitioned dmls" metrics.
 - **projects** - list of GCP projects
     - **project_id** - identifier of GCP project
     - **service_account_key** - path to service account JSON key It is highly recommended to set this property to the correct value. In case it is empty, the [Application Default Credentials](https://google.aip.dev/auth/4110) will be used for the database connection.

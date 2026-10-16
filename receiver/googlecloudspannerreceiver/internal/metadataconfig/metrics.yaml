@@ -3,16 +3,19 @@ metadata:
 # -------------------------------------------- Active Partitioned DMLs -------------------------------------------------
 #
   - name: "active partitioned dmls"
-    query: "SELECT SESSION_ID, SUBSTR(TEXT, 1, 100) AS TRUNCATED_TEXT, TEXT_FINGERPRINT, NUM_PARTITIONS_TOTAL, NUM_PARTITIONS_COMPLETE, NUM_TRIVIAL_PARTITIONS_COMPLETE, PROGRESS, ROWS_PROCESSED FROM SPANNER_SYS.ACTIVE_PARTITIONED_DMLS"
+    query: "SELECT SESSION_ID, TEXT, TEXT_TRUNCATED, TEXT_FINGERPRINT, NUM_PARTITIONS_TOTAL, NUM_PARTITIONS_COMPLETE, NUM_TRIVIAL_PARTITIONS_COMPLETE, PROGRESS, ROWS_PROCESSED FROM SPANNER_SYS.ACTIVE_PARTITIONED_DMLS"
     metric_name_prefix: "database/spanner/active_partitioned_dmls/"
     high_cardinality: true
     labels:
       - name: "session_id"
         column_name: "SESSION_ID"
         value_type: "string"
-      - name: "query_text_truncated"
-        column_name: "TRUNCATED_TEXT"
+      - name: "query_text"
+        column_name: "TEXT"
         value_type: "string"
+      - name: "query_text_truncated"
+        column_name: "TEXT_TRUNCATED"
+        value_type: "bool"
       - name: "query_text_fingerprint"
         column_name: "TEXT_FINGERPRINT"
         value_type: "int"
@@ -47,7 +50,6 @@ metadata:
         data:
           type: "gauge"
         unit: "one"
-
 #
 # -------------------------------------------- Active Queries Summary --------------------------------------------------
 #
